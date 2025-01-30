@@ -11,7 +11,6 @@ export class ProjectController {
             res.send('Proyecto Creado Correctamente')
         } catch (error) {
             console.log(error);
-            
         }
     }
 
@@ -35,8 +34,8 @@ export class ProjectController {
                 res.status(404).json({error: error.message})
                 return
             }
-
             res.send(project)
+            
         } catch (error) {
             console.log(error);
         }
@@ -55,7 +54,26 @@ export class ProjectController {
             }
 
             await project.save()
-            res.send('Proyecto Actualizado Correctamente')
+            res.send('Proyecto Actualizado')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static deleteProject = async (req: Request, res: Response) => {
+        const {id} = req.params
+
+        try {
+            const project = await Project.findById(id)
+
+            if(!project) {
+                const error = new Error('Proyecto no encontrado')
+                res.status(404).json({error: error.message})
+                return
+            }
+
+            await project.deleteOne()
+            res.send('Proyecto Eliminado')
         } catch (error) {
             console.log(error);
         }
