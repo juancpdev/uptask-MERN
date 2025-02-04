@@ -27,4 +27,20 @@ export class TaskController {
         }
     }
 
+    static getTaskById = async (req: Request, res: Response) => { 
+        try {
+            const { taskId, projectId } = req.params
+            const task = await Task.findOne({_id: taskId, project: projectId})
+
+            if(!task) {
+                res.status(404).json({error: 'Tarea no encontrada'})
+                return
+            }
+
+            res.json(task)
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
 }
