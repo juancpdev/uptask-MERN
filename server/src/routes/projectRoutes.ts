@@ -69,7 +69,6 @@ router.get('/:projectId/tasks/:taskId',
 )
 
 router.put('/:projectId/tasks/:taskId',
-    param('projectId').isMongoId().withMessage('ID de proyecto no válido'),
     param('taskId').isMongoId().withMessage('ID de tarea no válido'),
     body('name')
     .notEmpty().withMessage('El nombre de la tarea es obligatorio'),
