@@ -9,6 +9,7 @@ import { taskBelongsToProject, TaskExist } from "../middleware/task";
 const router = Router()
 
 /** Routes for projects */
+router.param('projectId', ProjectExist)
 
 router.post('/',
     body('projectName')
@@ -23,14 +24,12 @@ router.post('/',
 
 router.get('/', ProjectController.getAllProjects)
 
-router.get('/:id',
-    param('id').isMongoId().withMessage('ID no valido'),
+router.get('/:projectId',
     handleInputErrors,
     ProjectController.getProjectById
 )
 
-router.put('/:id',
-    param('id').isMongoId().withMessage('ID no valido'),
+router.put('/:projectId',
     body('projectName')
         .notEmpty().withMessage('El nombre del proyecto es obligatorio'),
     body('clientName')
@@ -41,14 +40,12 @@ router.put('/:id',
     ProjectController.updateProject
 )
 
-router.delete('/:id',
-    param('id').isMongoId().withMessage('ID no valido'),
+router.delete('/:projectId',
     handleInputErrors,
     ProjectController.deleteProject
 )
 
 /** Routes for task */
-router.param('projectId', ProjectExist)
 
 router.post('/:projectId/tasks',
     body('name')
