@@ -1,5 +1,4 @@
 import type {Request, Response, NextFunction} from "express"
-import { validationResult } from "express-validator"
 import Project, { IProject } from "../models/Project";
 import mongoose from "mongoose";
 
@@ -11,7 +10,7 @@ declare global {
     }
 }
 
-export const validateProjectExist = async (req : Request, res : Response, next : NextFunction) => {
+export const ProjectExist = async (req : Request, res : Response, next : NextFunction) => {
 
     try {
         const { projectId } = req.params
