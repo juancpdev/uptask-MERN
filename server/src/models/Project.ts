@@ -32,5 +32,10 @@ const ProjectSchema = new Schema({
     ]
 }, { timestamps: true });
 
+ProjectSchema.pre('deleteOne', { document: true }, async function() {
+    const Task = mongoose.model('Task');
+    await Task.deleteMany({ _id: { $in: this.tasks } });
+});
+
 const Project = mongoose.model<IProject>('Project', ProjectSchema)
 export default Project
