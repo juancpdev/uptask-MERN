@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import Router from './router'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <h1 className=' bg-red-300'>hola</h1>
+    <Router/>
   </StrictMode>,
 )
