@@ -14,7 +14,7 @@ export default function AppLayout() {
         </div>    
       </header>
       
-      <div className="my-10 p-5 max-w-screen-2xl mx-auto bg-amber-200">
+      <div className="m-10 p-5 2xl:max-w-screen-2xl 2xl:mx-auto 2xl:w-full">
         <Outlet/>
       </div>
 
