@@ -15,11 +15,11 @@ export default function AppLayout() {
         </div>    
       </header>
       
-      <div className="m-10 p-5 2xl:max-w-screen-2xl 2xl:mx-auto 2xl:w-full">
+      <div className="m-5 p-2 md:m-10 md:p-5 2xl:max-w-screen-2xl 2xl:mx-auto 2xl:w-full">
         <Outlet/>
       </div>
 
-      <footer className="bg-gray-800 py-10 text-white">
+      <footer className="bg-gray-800 py-10 text-sm md:text-base text-white">
         <p className="text-center">Todos los derechos reservador por UpTask - {new Date().getFullYear()}</p>
       </footer>
 
