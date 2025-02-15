@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { ProjectFormData } from "../types";
 import api from "@/lib/axios";
 
@@ -7,6 +8,8 @@ export async function createProject(formData : ProjectFormData) {
         return data
         
     } catch (error) {
-        console.log(error);
+        if(isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error)
+        }
     }
 }

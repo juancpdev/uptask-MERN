@@ -24,9 +24,9 @@ export default function ProjectForm({register, errors } : ProjectFormProps) {
                     })}
                 />
                 {errors.projectName && (
-                        <ErrorMessage>
-                            {errors.projectName.message}
-                        </ErrorMessage>
+                    <ErrorMessage>
+                        {errors.projectName.message}
+                    </ErrorMessage>
                 )}
             </div>
 
