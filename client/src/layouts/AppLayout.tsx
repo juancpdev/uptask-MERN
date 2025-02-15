@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Logo from "@/components/Logo";
 import NavMenu from "@/components/NavMenu";
+import { ToastContainer } from "react-toastify";
 
 export default function AppLayout() {
   return (
@@ -21,6 +22,11 @@ export default function AppLayout() {
       <footer className="bg-gray-800 py-10 text-white">
         <p className="text-center">Todos los derechos reservador por UpTask - {new Date().getFullYear()}</p>
       </footer>
+
+      <ToastContainer
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+      />
     </div>
   )
 }
