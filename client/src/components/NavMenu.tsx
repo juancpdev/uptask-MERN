@@ -25,14 +25,14 @@ export default function NavMenu() {
             <p className='text-center'>Hola: Usuario</p>
             <Link
               to='/profile'
-              className='block p-2 hover:text-purple-950'
+              className='block p-2 hover:text-purple-950 hover:bg-gray-50'
             >Mi Perfil</Link>
             <Link
               to='/'
-              className='block p-2 hover:text-purple-950 '
+              className='block p-2 hover:text-purple-950 hover:bg-gray-50'
             >Mis Proyectos</Link>
             <button
-              className='block p-2 hover:text-purple-950 w-full text-start cursor-pointer'
+              className='block p-2 hover:text-red-500 text-red-400 w-full text-start cursor-pointer hover:bg-gray-50'
               type='button'
               onClick={() => { }}
             >
