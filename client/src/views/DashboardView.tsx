@@ -7,17 +7,58 @@ import {
   Transition,
 } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { getProjects } from "@/api/ProjectAPI";
-import { useQuery } from "@tanstack/react-query";
+import { deleteProject, getProjects } from "@/api/ProjectAPI";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from 'sweetalert2'
+import { Project } from "../types";
 
 export default function DashboardView() {
+
+  // Obtiene datos
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
   });
+  
+  // Fuerza un nuevo refecht y obtiene datos nuevos
+  const queryClient = useQueryClient()
 
-  console.log(data);
+  // Modifica datos
+  const {mutate} = useMutation({
+    mutationFn: deleteProject,
+    onError: (error) => {
+      toast.error(error.message)
+    },
+    onSuccess: (data) => { 
+      toast.success(data)
+      queryClient.invalidateQueries({queryKey: ["projects"]})
+    }
+  })
+
+  const confirmDelete = (projectId: Project['_id']) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "¡Eliminado!",
+          text: "Tu proyecto ha sido eliminado.",
+          icon: "success"
+        });
+        mutate(projectId);
+      }
+    });
+  };
+  
+
   if (isLoading) return <div>Cargando...</div>;
 
   if (data)
@@ -91,7 +132,7 @@ export default function DashboardView() {
                         </MenuItem>
                         <MenuItem>
                           <Link
-                            to={``}
+                            to={`/projects/${project._id}/edit`}
                             className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
                           >
                             Editar Proyecto
@@ -101,7 +142,7 @@ export default function DashboardView() {
                           <button
                             type="button"
                             className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
-                            onClick={() => {}}
+                            onClick={() => confirmDelete(project._id)}
                           >
                             Eliminar Proyecto
                           </button>
