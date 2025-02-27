@@ -80,7 +80,7 @@ export default function DashboardView() {
         {data.length ? (
           <ul
             role="list"
-            className="divide-y divide-gray-100 border rounded-2xl border-gray-100 my-10 bg-white shadow-lg"
+            className=" w-full md:max-w-xl xl:max-w-6xl divide-y divide-gray-100 border rounded-2xl border-gray-100 my-10 bg-white shadow-lg"
           >
             {data.map((project) => (
               <li
@@ -90,7 +90,7 @@ export default function DashboardView() {
                 <div className="flex min-w-0 gap-x-4">
                   <div className="min-w-0 flex-auto space-y-2">
                     <Link
-                      to={``}
+                      to={`/projects/${project._id}`}
                       className="text-gray-600 cursor-pointer hover:underline text-2xl md:text-3xl font-bold"
                     >
                       {project.projectName}
@@ -98,7 +98,7 @@ export default function DashboardView() {
                     <p className="text-sm text-gray-400 mt-2">
                       Cliente: {project.clientName}
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-400 line-clamp-2">
                       {project.description}
                     </p>
                   </div>
@@ -124,7 +124,7 @@ export default function DashboardView() {
                       <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                         <MenuItem>
                           <Link
-                            to={``}
+                            to={`/projects/${project._id}`}
                             className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
                           >
                             Ver Proyecto
