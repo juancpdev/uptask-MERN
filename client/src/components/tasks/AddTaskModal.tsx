@@ -50,20 +50,20 @@ export default function AddTaskModal() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-16">
+                                <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-6 md:p-12">
                                     <DialogTitle
                                         as="h3"
-                                        className="font-black text-4xl  my-5"
+                                        className="font-black text-2xl md:text-4xl my-2"
                                     >
                                         Nueva Tarea
                                     </DialogTitle>
 
-                                    <p className="text-xl font-bold">Llena el formulario y crea  {''}
-                                        <span className="text-fuchsia-600">una tarea</span>
+                                    <p className="text-md md:text-xl ">Llena el formulario y crea  {''}
+                                        <span className="text-fuchsia-600 font-bold">una tarea</span>
                                     </p>
 
                                     <form 
-                                        className='mt-10 space-y-3 flex flex-col gap-2'
+                                        className='mt-6 md:mt-10 space-y-3 flex flex-col gap-2'
                                         onSubmit={handleSubmit(handleCreateTask)}
                                         noValidate
                                     >
