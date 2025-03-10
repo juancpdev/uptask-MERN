@@ -22,6 +22,7 @@ export default function TaskForm({errors, register} : TaskFormProps) {
                     className="w-full p-3  border-gray-300 border rounded-md"
                     {...register("name", {
                         required: "El nombre de la tarea es obligatorio",
+                        validate: (value) => value.trim().length > 0 || "El nombre no puede estar vacío"
                     })}
                 />
                 {errors.name && (
@@ -39,7 +40,8 @@ export default function TaskForm({errors, register} : TaskFormProps) {
                     placeholder="Descripción de la tarea"
                     className="w-full p-3  border-gray-300 border rounded-md"
                     {...register("description", {
-                        required: "La descripción de la tarea es obligatoria"
+                        required: "La descripción de la tarea es obligatoria",
+                        validate: (value) => value.trim().length > 0 || "La descripción no puede estar vacía"
                     })}
                 />
                 {errors.description && (

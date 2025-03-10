@@ -21,6 +21,7 @@ export default function ProjectForm({register, errors } : ProjectFormProps) {
                     placeholder="Nombre del Proyecto"
                     {...register("projectName", {
                         required: "El Titulo del Proyecto es obligatorio",
+                        validate: (value) => value.trim().length > 0 || "El titulo no puede estar vacío"
                     })}
                 />
                 {errors.projectName && (
@@ -41,6 +42,7 @@ export default function ProjectForm({register, errors } : ProjectFormProps) {
                     placeholder="Nombre del Cliente"
                     {...register("clientName", {
                         required: "El Nombre del Cliente es obligatorio",
+                        validate: (value) => value.trim().length > 0 || "El nombre no puede estar vacío"
                     })}
                 />
                 {errors.clientName && (
@@ -59,7 +61,8 @@ export default function ProjectForm({register, errors } : ProjectFormProps) {
                     className="w-full p-3  border border-gray-200 m-0 block text-sm rounded-md"
                     placeholder="Descripción del Proyecto"
                     {...register("description", {
-                        required: "Una descripción del proyecto es obligatoria"
+                        required: "Una descripción del proyecto es obligatoria",
+                        validate: (value) => value.trim().length > 0 || "La descripción no puede estar vacío"
                     })}
                 />
                 {errors.description && (

@@ -28,7 +28,7 @@ export const ProjectExist = async (req : Request, res : Response, next : NextFun
             });
         }
 
-        const project = await Project.findById(projectId)
+        const project = await Project.findById(projectId).populate('tasks')
         console.log(project);
 
         if(!project) {
