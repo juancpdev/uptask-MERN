@@ -1,13 +1,56 @@
+import { deleteTask } from "@/api/TaskAPI";
 import { Task } from "@/types/index";
 import { Menu, MenuButton, Transition, MenuItems, MenuItem } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {Fragment} from "react"
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 type TaskCardProps = {
   task: Task;
 };
 
 export default function TaskCard({ task }: TaskCardProps) {
+
+  const navigate = useNavigate()
+
+  const params = useParams()
+
+    /** Obtener projectId */
+    const projectId = params.projectId!
+
+    const queryClient = useQueryClient()
+
+    const {mutate} = useMutation({
+        mutationFn : deleteTask,
+        onError : (error) => {
+            toast.error(error.message)
+        },
+        onSuccess : (data) => {
+            queryClient.invalidateQueries({queryKey: ['project', projectId]})
+            toast.success(data)
+            navigate(location.pathname, {replace: true})
+        }
+    })
+
+      const confirmDelete = (taskId: Task['_id']) => {
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "¡No podrás revertir esto!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminar"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            mutate({projectId, taskId});
+          }
+        });
+      };
+
   return (
     <li className="flex justify-between bg-white rounded-b-lg p-5 shadow-md">
       <div className="flex flex-col items-start gap-5">
@@ -45,6 +88,7 @@ export default function TaskCard({ task }: TaskCardProps) {
                 <button
                   type="button"
                   className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer"
+                  onClick={() => navigate(location.pathname + "?editTask=" + task._id)}
                 >
                   Editar Tarea
                 </button>
@@ -54,6 +98,7 @@ export default function TaskCard({ task }: TaskCardProps) {
                 <button
                   type="button"
                   className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer"
+                  onClick={() => confirmDelete(task._id)}
                 >
                   Eliminar Tarea
                 </button>

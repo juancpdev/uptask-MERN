@@ -2,7 +2,6 @@ import { Task } from "@/types/index";
 import TaskCard from "./TaskCard";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
-import "swiper/swiper-bundle.css";
 import { useEffect, useState } from "react";
 
 type TaskListProps = {

@@ -1,5 +1,6 @@
 import { getProjectById } from "@/api/ProjectAPI";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
+import EditTaskData from "@/components/tasks/EditTaskData";
 import TaskList from "@/components/tasks/TaskList";
 import { ArrowUturnLeftIcon } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +14,7 @@ export default function ProjectDetailsView() {
   const projectId = params.projectId!;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["editProject", projectId],
+    queryKey: ["project", projectId],
     queryFn: () => getProjectById(projectId),
     retry: false,
   });
@@ -39,6 +40,7 @@ export default function ProjectDetailsView() {
           tasks={data.tasks}
         />
         <AddTaskModal />
+        <EditTaskData />
       </>
     );
 }
