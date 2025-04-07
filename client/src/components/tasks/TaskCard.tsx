@@ -54,7 +54,7 @@ export default function TaskCard({ task }: TaskCardProps) {
   return (
     <li className="flex justify-between bg-white rounded-b-lg p-5 shadow-md">
       <div className="flex flex-col items-start gap-5">
-        <button className="font-bold uppercase">
+        <button className="font-bold uppercase text-start">
           {task.name}
         </button>
         <p className="text-gray-500">{task.description}</p>
