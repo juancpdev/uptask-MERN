@@ -3,6 +3,7 @@ import TaskCard from "./TaskCard";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { TranslateStatus } from "@/locales/es";
 
 type TaskListProps = {
   tasks: Task[];
@@ -18,14 +19,6 @@ const initialStatusGruops: GrupedTask = {
   inProgress: [],
   underReview: [],
   completed: [],
-};
-
-const TranslateStatus: { [key: string]: string } = {
-  pending: "Pendiente",
-  onHold: "En espera",
-  inProgress: "En Progreso",
-  underReview: "Bajo Revisión",
-  completed: "Completado",
 };
 
 const ColorizeStatus: { [key: string]: string } = {
