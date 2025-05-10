@@ -5,5 +5,3 @@ export const TranslateStatus: { [key: string]: string } = {
     underReview: "Bajo Revisión",
     completed: "Completado",
 };
-
-console.log(Object.entries(TranslateStatus));

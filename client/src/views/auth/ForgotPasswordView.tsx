@@ -45,7 +45,7 @@ export default function ForgotPasswordView() {
         noValidate
       >
         <div className="flex flex-col">
-          <label className="font-normal text-2xl mb-2" htmlFor="email">
+          <label className="font-normal text-xl mb-2" htmlFor="email">
             Email
           </label>
           <input

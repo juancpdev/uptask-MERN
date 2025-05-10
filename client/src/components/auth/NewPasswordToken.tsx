@@ -8,10 +8,11 @@ import { toast } from 'react-toastify';
 
 type NewPasswordTokenProps = {
     token: ConfirmToken['token'],
-    setToken: React.Dispatch<React.SetStateAction<string>>
+    setToken: React.Dispatch<React.SetStateAction<string>>,
+    setIsValidToken: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function NewPasswordToken({token, setToken} : NewPasswordTokenProps) {
+export default function NewPasswordToken({token, setToken, setIsValidToken} : NewPasswordTokenProps) {
     const firstInputRef = useRef<HTMLInputElement>(null);
 
     const {mutate} = useMutation({
@@ -28,6 +29,7 @@ export default function NewPasswordToken({token, setToken} : NewPasswordTokenPro
         onSuccess: (data) => {
             toast.dismiss();
             toast.success(data)
+            setIsValidToken(true)
         }
     })
 
