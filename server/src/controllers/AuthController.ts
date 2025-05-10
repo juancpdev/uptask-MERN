@@ -4,7 +4,6 @@ import { checkPassword, hashPassword } from '../utils/auth'
 import { Error } from 'mongoose'
 import Token from '../models/Token'
 import { generateToken } from '../utils/token'
-import { transporter } from '../config/nodemailer'
 import { AuthEmails } from '../emails/AuthEmails'
 
 export class AuthController {
@@ -141,6 +140,98 @@ export class AuthController {
 
             await Promise.allSettled([user.save(), token.save()])
             res.send('Token enviado correctamente, revisa tu e-mail')
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
+    static forgotPassword = async (req : Request, res : Response) => {
+        try {
+            const { email } = req.body
+
+            // Usuario existe
+            const user = await User.findOne({email})
+            if (!user) { 
+                const error = new Error('El Usuario no esta registrado')
+                res.status(404).json({error: error.message})
+                return
+            }
+
+            const existingToken = await Token.findOne({ user });
+
+            if(existingToken === null) {
+                // Generate token
+                const token = new Token()
+                token.token = generateToken()
+                token.user = user.id
+                await token.save()
+                
+                // enviar mail
+                AuthEmails.sendResetPassword({
+                    email: user.email,
+                    name: user.name,
+                    token: token.token
+                })
+
+            res.send('Token enviado correctamente, revisa tu e-mail')
+            } else {
+                // eliminar token previo
+                await existingToken.deleteOne()
+                // Generate token
+                const token = new Token()
+                token.token = generateToken()
+                token.user = user.id
+                await token.save()
+                
+                // enviar mail
+                AuthEmails.sendResetPassword({
+                    email: user.email,
+                    name: user.name,
+                    token: token.token
+                })
+            res.send('Token reenviado correctamente, revisa tu e-mail')
+            }
+            
+
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
+    static validateToken = async (req: Request, res: Response) => {
+        try {
+            const {token} = req.body
+            const tokenExist = await Token.findOne({token})
+
+            if(!tokenExist) {
+                res.status(404).json({error: 'Token no válido o expirado'})
+                return
+            }
+
+            res.send('Token valido, Define tu nuevo password')
+            
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
+    static updatePasswordWithToken = async (req: Request, res: Response) => {
+        try {
+            const {token} = req.params
+            const {password} = req.body
+            const tokenExist = await Token.findOne({token})
+
+            if(!tokenExist) {
+                res.status(404).json({error: 'Token no válido o expirado'})
+                return
+            }
+
+            const user = await User.findById(tokenExist.user)
+            user.password = await hashPassword(password)
+
+            await Promise.allSettled([user.save(), tokenExist.deleteOne()])
+            res.send('Password cambiado correctamente')
+            
         } catch (error) {
             res.status(500).json({error: 'Hubo un error'})
         }

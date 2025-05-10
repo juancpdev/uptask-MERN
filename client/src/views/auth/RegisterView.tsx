@@ -19,6 +19,7 @@ export default function RegisterView() {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<UserRegistrationForm>({ defaultValues: initialValues });
 
@@ -27,9 +28,13 @@ export default function RegisterView() {
   const {mutate} = useMutation({
     mutationFn: createAccount,
     onError: (error) => {
+        toast.dismiss();
         toast.error(error.message)
+        setValue('password', ''); 
+        setValue('password_confirmation', ''); 
     },
     onSuccess: (data) => {
+        toast.dismiss();
         toast.success(data)
         reset()
     }
@@ -130,7 +135,8 @@ export default function RegisterView() {
         />
       </form>
       <nav className=" text-white text-center mt-5">
-        <Link to={"/auth/login"}>¿Ya tienes cuenta? <strong className="text-fuchsia-500">Iniciar Sesion</strong></Link>
+        <Link to={"/auth/login"}>¿Ya tienes cuenta? <strong className="text-fuchsia-500">Iniciar Sesion</strong></Link><br/>
+        <Link to={"/auth/forgot-password"}>¿Olvidaste tu password? <strong className="text-fuchsia-500">Reestablecer</strong></Link>
       </nav>
     </>
   );

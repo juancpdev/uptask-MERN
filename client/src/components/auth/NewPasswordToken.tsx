@@ -1,18 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
-import { PinInput, PinInputField } from "@chakra-ui/pin-input"
-import { useRef, useState } from "react";
-import { ConfirmToken } from "@/types/index";
-import { useMutation } from "@tanstack/react-query";
-import { confirmAccount } from "@/api/AuthAPI";
-import { toast } from "react-toastify";
+import { validateToken } from '@/api/AuthAPI';
+import { ConfirmToken } from '@/types/index';
+import { PinInput, PinInputField } from '@chakra-ui/pin-input';
+import { useMutation } from '@tanstack/react-query';
+import { useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-export default function ConfirmAccountView() {
-    const [token, setToken] = useState<ConfirmToken['token']>('')
-    const firstInputRef = useRef<HTMLInputElement>(null); // ref al primer campo
-    const navigate = useNavigate()
+type NewPasswordTokenProps = {
+    token: ConfirmToken['token'],
+    setToken: React.Dispatch<React.SetStateAction<string>>
+}
+
+export default function NewPasswordToken({token, setToken} : NewPasswordTokenProps) {
+    const firstInputRef = useRef<HTMLInputElement>(null);
 
     const {mutate} = useMutation({
-        mutationFn: confirmAccount,
+        mutationFn: validateToken,
         onError: (error) => {
             toast.dismiss();
             toast.error(error.message)
@@ -25,7 +28,6 @@ export default function ConfirmAccountView() {
         onSuccess: (data) => {
             toast.dismiss();
             toast.success(data)
-            navigate('/auth/login')
         }
     })
 
@@ -35,9 +37,9 @@ export default function ConfirmAccountView() {
 
     const handleComplete = (token : ConfirmToken['token']) => mutate({token})
 
-  return (
-    <>
-      <h1 className="text-3xl font-black text-white">Confirma tu Cuenta</h1>
+    return (
+        <>
+      <h1 className="text-3xl font-black text-white">Reestablecer Password</h1>
       <p className="text-lg font-light text-white mt-5">
         Ingresa el código que recibiste {''}
         <span className=" text-fuchsia-500 font-bold"> por e-mail</span>
@@ -63,13 +65,13 @@ export default function ConfirmAccountView() {
 
       <nav className="mt-10 flex flex-col space-y-4">
         <Link
-          to='/auth/request-code'
+          to='/auth/forgot-password'
           className="text-center text-gray-300 font-normal"
         >
           Solicitar un nuevo Código
         </Link>
       </nav>
 
-    </>
-  )
+        </>
+    )
 }

@@ -12,14 +12,17 @@ export default function LoginView() {
     email: '',
     password: '',
   }
-  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({ defaultValues: initialValues })
 
   const {mutate} = useMutation({
     mutationFn: authenticateUser,
     onError: (error) => {
+      toast.dismiss();
       toast.error(error.message)
+      setValue('password', ''); 
     },
     onSuccess: (data) => {
+      toast.dismiss();
       toast.success(data)
     }
   })
@@ -28,9 +31,14 @@ export default function LoginView() {
 
   return (
     <>
+      <h1 className="text-3xl font-black text-white">Iniciar Sesion</h1>
+      <p className="text-lg font-light text-white mt-2">
+        Comienza a planear {""}
+        <span className=" text-fuchsia-500 font-bold"> tus proyectos</span>
+      </p>
       <form
         onSubmit={handleSubmit(handleLogin)}
-        className="space-y-6 p-10 bg-white rounded-lg"
+        className="space-y-6 p-10 mt-5 bg-white rounded-lg"
         noValidate
       >
         <div className="flex flex-col">
@@ -81,7 +89,8 @@ export default function LoginView() {
         />
       </form>
       <nav className=" text-white text-center mt-5">
-        <Link to={"/auth/register"}>¿No tienes cuenta? <strong className="text-fuchsia-500">Crear Una</strong></Link>
+        <Link to={"/auth/register"}>¿No tienes cuenta? <strong className="text-fuchsia-500">Crear Una</strong></Link> <br/>
+        <Link to={"/auth/forgot-password"}>¿Olvidaste tu password? <strong className="text-fuchsia-500">Reestablecer</strong></Link>
       </nav>
     </>
   )

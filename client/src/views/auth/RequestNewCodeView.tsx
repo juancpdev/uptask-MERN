@@ -16,9 +16,11 @@ export default function RequestNewCodeView() {
     const {mutate} = useMutation({
         mutationFn: requestConfirmationCode,
         onError: (error) => {
+            toast.dismiss();
             toast.error(error.message)
         },
         onSuccess: (data) => {
+            toast.dismiss();
             toast.success(data)
             reset()
         }
@@ -69,19 +71,9 @@ export default function RequestNewCodeView() {
                 />
             </form>
 
-            <nav className="mt-10 flex flex-col space-y-4">
-                <Link
-                    to='/auth/login'
-                    className="text-center text-gray-300 font-normal"
-                >
-                    ¿Ya tienes cuenta? Iniciar Sesión
-                </Link>
-                <Link
-                    to='/auth/forgot-password'
-                    className="text-center text-gray-300 font-normal"
-                >
-                    ¿Olvidaste tu contraseña? Reestablecer
-                </Link>
+            <nav className=" text-white text-center mt-5">
+                <Link to={"/auth/login"}>¿Ya tienes cuenta? <strong className="text-fuchsia-500">Iniciar Sesion</strong></Link><br/>
+                <Link to={"/auth/forgot-password"}>¿Olvidaste tu password? <strong className="text-fuchsia-500">Reestablecer</strong></Link>
             </nav>
         </>
     )
