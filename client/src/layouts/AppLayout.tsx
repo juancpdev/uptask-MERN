@@ -1,10 +1,17 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Navigate, Outlet } from "react-router-dom";
 import Logo from "@/components/Logo";
 import NavMenu from "@/components/NavMenu";
 import { ToastContainer } from "react-toastify";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AppLayout() {
-  return (
+
+  const { data, isError, isLoading } = useAuth()
+
+  if(isLoading) return 'Cargando...'
+  if(isError) return <Navigate to={'/auth/login'} />
+
+  if(data) return (
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto]">
       <header className="bg-gray-800 p-5">
         <div className=" max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center">     
@@ -13,7 +20,11 @@ export default function AppLayout() {
               <Logo/>
             </Link>
           </div>
-          <NavMenu/>
+
+          <NavMenu
+            name={data.name}
+          />
+
         </div>    
       </header>
       

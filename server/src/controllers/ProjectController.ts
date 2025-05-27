@@ -7,6 +7,8 @@ export class ProjectController {
         const project = new Project(req.body)
         console.log(req.user);
         
+        project.manager = req.user.id
+        
         try {
             await project.save()
             res.send('Proyecto Creado Correctamente')
@@ -17,7 +19,11 @@ export class ProjectController {
 
     static getAllProjects = async (req: Request, res: Response) => {
         try {
-            const projects = await Project.find({})
+            const projects = await Project.find({
+                $or: [
+                    { manager: {$in: req.user.id} }
+                ]
+            })
             res.send(projects)
         } catch (error) {
             console.log(error);
@@ -26,7 +32,13 @@ export class ProjectController {
 
     static getProjectById = async (req: Request, res: Response) => {
         try {
+
+            if(req.project.manager.toString() !== req.user.id.toString()){ 
+                res.status(404).json({error: 'No tienes permisos'})
+                return
+            }
             res.json(req.project)
+
         } catch (error) {
             res.status(500).json({error: 'Hubo un error'})
         }
@@ -34,6 +46,12 @@ export class ProjectController {
 
     static updateProject = async (req: Request, res: Response) => {
         try {
+
+            if(req.project.manager.toString() !== req.user.id.toString()){ 
+                res.status(404).json({error: 'No tienes permisos'})
+                return
+            }
+
             req.project.projectName = req.body.projectName
             req.project.clientName = req.body.clientName
             req.project.description = req.body.description
@@ -47,6 +65,12 @@ export class ProjectController {
 
     static deleteProject = async (req: Request, res: Response) => {
         try {
+
+            if(req.project.manager.toString() !== req.user.id.toString()){ 
+                res.status(404).json({error: 'No tienes permisos'})
+                return
+            }
+
             await req.project.deleteOne()
             res.send('Proyecto Eliminado')
         } catch (error) {
