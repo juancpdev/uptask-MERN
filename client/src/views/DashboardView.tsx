@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from 'sweetalert2'
 import { Project } from "../types";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function DashboardView() {
 
@@ -57,6 +58,8 @@ export default function DashboardView() {
       }
     });
   };
+
+    const { data : userAuth } = useAuth()
   
 
   if (isLoading) return <div>Cargando...</div>;
@@ -85,8 +88,18 @@ export default function DashboardView() {
             {data.map((project) => (
               <li
                 key={project._id}
-                className="flex justify-between gap-x-6 px-5 py-10"
+                className="relative flex justify-between gap-x-6 px-5 py-10"
               >
+                {userAuth && (
+                  <>
+                    {project.manager === userAuth._id && (
+                      <p className="absolute bg-gray-700 p-2 rounded-br-2xl top-0 left-0 text-sm bg- font-semibold">👑</p>
+                    )}
+                    {project.team.includes(userAuth._id) && project.manager !== userAuth._id && (
+                      <p className="absolute bg-gray-300 p-2 rounded-br-2xl top-0 left-0 text-sm font-semibold">👥</p>
+                    )}
+                  </>
+                )}
                 <div className="flex min-w-0 gap-x-4">
                   <div className="min-w-0 flex-auto space-y-2">
                     <Link
