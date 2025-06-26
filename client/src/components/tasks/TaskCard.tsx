@@ -26,10 +26,12 @@ export default function TaskCard({ task }: TaskCardProps) {
     const {mutate} = useMutation({
         mutationFn : deleteTask,
         onError : (error) => {
+            toast.dismiss();
             toast.error(error.message)
         },
         onSuccess : (data) => {
             queryClient.invalidateQueries({queryKey: ['project', projectId]})
+            toast.dismiss();
             toast.success(data)
             navigate(location.pathname, {replace: true})
         }

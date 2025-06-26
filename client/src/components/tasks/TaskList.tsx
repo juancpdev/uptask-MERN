@@ -1,7 +1,7 @@
 import { Task } from "@/types/index";
 import TaskCard from "./TaskCard";
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { useNavigate } from "react-router-dom";
+import { PlusIcon, UserGroupIcon } from "@heroicons/react/20/solid";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { TranslateStatus } from "@/locales/es";
 
@@ -31,6 +31,7 @@ const ColorizeStatus: { [key: string]: string } = {
 
 export default function TaskList({ tasks }: TaskListProps) {
   const navigate = useNavigate();
+  
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Actualizar el número de slides cuando cambia el tamaño de la ventana
@@ -60,6 +61,12 @@ export default function TaskList({ tasks }: TaskListProps) {
           className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
           onClick={() => navigate(location.pathname + "?newTask=true")}
         />
+        <Link to={`team`}>
+          <UserGroupIcon
+            className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
+            onClick={() => navigate(location.pathname + "?addMember=true")}
+          />
+        </Link>
       </div>
 
       {/* Modo móvil: uso de acordeón */}

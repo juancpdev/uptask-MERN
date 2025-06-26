@@ -32,11 +32,13 @@ export default function EditTaskModal({data, taskId} : EditTaskModalProps) {
     const {mutate} = useMutation({
         mutationFn : updateTask,
         onError : (error) => {
+            toast.dismiss();
             toast.error(error.message)
         },
         onSuccess : (data) => {
             queryClient.invalidateQueries({queryKey: ['project', projectId]})
             queryClient.invalidateQueries({queryKey: ['task', taskId]})
+            toast.dismiss();
             toast.success(data)
             navigate(location.pathname, {replace: true})
             reset()

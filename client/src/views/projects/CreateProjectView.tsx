@@ -21,9 +21,11 @@ export default function CreateProjectView() {
     const {mutate} = useMutation({
         mutationFn: createProject,
         onError: (error) => {
+            toast.dismiss();
             toast.error(error.message)
         },
         onSuccess: (data) => {
+            toast.dismiss();
             toast.success(data)
             navigate('/')
         }

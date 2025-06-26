@@ -21,7 +21,8 @@ export class ProjectController {
         try {
             const projects = await Project.find({
                 $or: [
-                    { manager: {$in: req.user.id} }
+                    { manager: {$in: req.user.id} },
+                    { team: {$in: req.user.id} }
                 ]
             })
             res.send(projects)
@@ -33,7 +34,7 @@ export class ProjectController {
     static getProjectById = async (req: Request, res: Response) => {
         try {
 
-            if(req.project.manager.toString() !== req.user.id.toString()){ 
+            if(req.project.manager.toString() !== req.user.id.toString() && !req.project.team.some(id => id.toString() === req.user.id.toString()) ){ 
                 res.status(404).json({error: 'No tienes permisos'})
                 return
             }
