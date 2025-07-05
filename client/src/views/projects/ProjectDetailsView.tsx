@@ -3,8 +3,10 @@ import AddTaskModal from "@/components/tasks/AddTaskModal";
 import EditTaskData from "@/components/tasks/EditTaskData";
 import TaskList from "@/components/tasks/TaskList";
 import TaskModalDetails from "@/components/tasks/TaskModalDetail";
+import { useAuth } from "@/hooks/useAuth";
 import { ArrowUturnLeftIcon } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 export default function ProjectDetailsView() {
@@ -20,9 +22,13 @@ export default function ProjectDetailsView() {
     retry: false,
   });
 
-  if (isLoading) return "Cargando...";
+  const { data : userAuth, isLoading: isLoadingAuth } = useAuth()
+
+  const canEdit = useMemo(() => data?.manager === userAuth?._id, [data, userAuth])
+
+  if (isLoading && isLoadingAuth) return "Cargando...";
   if (isError) return <Navigate to="/404" />;
-  if (data)
+  if (data && userAuth)
     return (
       <>
         <div className="flex justify-between">
@@ -39,6 +45,9 @@ export default function ProjectDetailsView() {
         
         <TaskList
           tasks={data.tasks}
+          userAuth={userAuth}
+          manager={data.manager}
+          canEdit={canEdit}
         />
         <AddTaskModal />
         <EditTaskData />

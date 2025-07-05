@@ -1,62 +1,71 @@
 import { deleteTask } from "@/api/TaskAPI";
 import { Task } from "@/types/index";
-import { Menu, MenuButton, Transition, MenuItems, MenuItem } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  Transition,
+  MenuItems,
+  MenuItem,
+} from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {Fragment} from "react"
+import { Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 type TaskCardProps = {
   task: Task;
+  canEdit: boolean;
 };
 
-export default function TaskCard({ task }: TaskCardProps) {
+export default function TaskCard({ task, canEdit }: TaskCardProps) {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const params = useParams();
 
-  const params = useParams()
+  /** Obtener projectId */
+  const projectId = params.projectId!;
 
-    /** Obtener projectId */
-    const projectId = params.projectId!
+  const queryClient = useQueryClient();
 
-    const queryClient = useQueryClient()
+  const { mutate } = useMutation({
+    mutationFn: deleteTask,
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      toast.dismiss();
+      toast.success(data);
+      navigate(location.pathname, { replace: true });
+    },
+  });
 
-    const {mutate} = useMutation({
-        mutationFn : deleteTask,
-        onError : (error) => {
-            toast.dismiss();
-            toast.error(error.message)
-        },
-        onSuccess : (data) => {
-            queryClient.invalidateQueries({queryKey: ['project', projectId]})
-            toast.dismiss();
-            toast.success(data)
-            navigate(location.pathname, {replace: true})
-        }
-    })
-
-      const confirmDelete = (taskId: Task['_id']) => {
-        Swal.fire({
-          title: "¿Estás seguro?",
-          text: "¡No podrás revertir esto!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Sí, eliminar"
-        }).then((result) => {
-          if (result.isConfirmed) {
-            mutate({projectId, taskId});
-          }
-        });
-      };
+  const confirmDelete = (taskId: Task["_id"]) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutate({ projectId, taskId });
+      }
+    });
+  };
 
   return (
     <li className="flex justify-between bg-white rounded-b-lg p-5 shadow-md">
       <div className="flex flex-col items-start gap-5">
-        <button className="font-bold uppercase text-start">
+        <button
+          className="font-bold uppercase text-start cursor-pointer transition hover:text-gray-500"
+          onClick={() => navigate(location.pathname + "?viewTask=" + task._id)}
+        >
           {task.name}
         </button>
         <p className="text-gray-500">{task.description}</p>
@@ -82,30 +91,38 @@ export default function TaskCard({ task }: TaskCardProps) {
                 <button
                   type="button"
                   className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer"
-                  onClick={() => navigate(location.pathname + "?viewTask=" + task._id)}
+                  onClick={() =>
+                    navigate(location.pathname + "?viewTask=" + task._id)
+                  }
                 >
                   Ver Tarea
                 </button>
               </MenuItem>
-              <MenuItem>
-                <button
-                  type="button"
-                  className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer"
-                  onClick={() => navigate(location.pathname + "?editTask=" + task._id)}
-                >
-                  Editar Tarea
-                </button>
-              </MenuItem>
+              {canEdit && (
+                <>
+                  <MenuItem>
+                    <button
+                      type="button"
+                      className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer"
+                      onClick={() =>
+                        navigate(location.pathname + "?editTask=" + task._id)
+                      }
+                    >
+                      Editar Tarea
+                    </button>
+                  </MenuItem>
 
-              <MenuItem>
-                <button
-                  type="button"
-                  className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer"
-                  onClick={() => confirmDelete(task._id)}
-                >
-                  Eliminar Tarea
-                </button>
-              </MenuItem>
+                  <MenuItem>
+                    <button
+                      type="button"
+                      className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer"
+                      onClick={() => confirmDelete(task._id)}
+                    >
+                      Eliminar Tarea
+                    </button>
+                  </MenuItem>
+                </>
+              )}
             </MenuItems>
           </Transition>
         </Menu>

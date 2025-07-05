@@ -1,12 +1,16 @@
-import { Task } from "@/types/index";
+import { Task, User } from "@/types/index";
 import TaskCard from "./TaskCard";
 import { PlusIcon, UserGroupIcon } from "@heroicons/react/20/solid";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { TranslateStatus } from "@/locales/es";
+import { isManager } from "@/types/policies";
 
 type TaskListProps = {
   tasks: Task[];
+  userAuth: User
+  manager: string
+  canEdit: boolean
 };
 
 type GrupedTask = {
@@ -29,9 +33,9 @@ const ColorizeStatus: { [key: string]: string } = {
   completed: "border-t-emerald-500",
 };
 
-export default function TaskList({ tasks }: TaskListProps) {
+export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskListProps) {
   const navigate = useNavigate();
-  
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Actualizar el número de slides cuando cambia el tamaño de la ventana
@@ -57,16 +61,20 @@ export default function TaskList({ tasks }: TaskListProps) {
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold my-6 md:my-8 lg:my-10">
           Tareas
         </h2>
-        <PlusIcon
-          className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
-          onClick={() => navigate(location.pathname + "?newTask=true")}
-        />
-        <Link to={`team`}>
-          <UserGroupIcon
-            className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
-            onClick={() => navigate(location.pathname + "?addMember=true")}
-          />
-        </Link>
+        {isManager(manager, userAuth._id) && (
+          <>
+            <PlusIcon
+              className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
+              onClick={() => navigate(location.pathname + "?newTask=true")}
+            />
+            <Link to={`team`}>
+              <UserGroupIcon
+                className="w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
+                onClick={() => navigate(location.pathname + "?addMember=true")}
+              />
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Modo móvil: uso de acordeón */}
@@ -88,7 +96,7 @@ export default function TaskList({ tasks }: TaskListProps) {
                 ) : (
                   <ul className="space-y-4">
                     {tasks.map((task) => (
-                      <TaskCard key={task._id} task={task} />
+                      <TaskCard key={task._id} task={task} canEdit={canEdit}/>
                     ))}
                   </ul>
                 )}
@@ -120,7 +128,7 @@ export default function TaskList({ tasks }: TaskListProps) {
                     No Hay tareas
                   </li>
                 ) : (
-                  tasks.map((task) => <TaskCard key={task._id} task={task} />)
+                  tasks.map((task) => <TaskCard key={task._id} task={task} canEdit={canEdit} />)
                 )}
               </ul>
             </div>

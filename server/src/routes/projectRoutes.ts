@@ -4,7 +4,7 @@ import { body, param } from "express-validator";
 import { handleInputErrors } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { ProjectExist } from "../middleware/project";
-import { taskBelongsToProject, TaskExist } from "../middleware/task";
+import { hasAutorization, taskBelongsToProject, TaskExist } from "../middleware/task";
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
 
@@ -52,6 +52,7 @@ router.delete('/:projectId',
 /** Routes for task */
 
 router.post('/:projectId/tasks',
+    hasAutorization,
     body('name')
     .notEmpty().withMessage('El nombre de la tarea es obligatorio'),
     body('description')
@@ -73,6 +74,7 @@ router.get('/:projectId/tasks/:taskId',
 )
  
 router.put('/:projectId/tasks/:taskId',
+    hasAutorization,
     body('name')
     .notEmpty().withMessage('El nombre de la tarea es obligatorio'),
     body('description')
@@ -82,6 +84,7 @@ router.put('/:projectId/tasks/:taskId',
 )
 
 router.delete('/:projectId/tasks/:taskId',
+    hasAutorization,
     handleInputErrors,
     TaskController.deleteTask
 )

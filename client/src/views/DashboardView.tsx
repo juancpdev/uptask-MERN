@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import Swal from 'sweetalert2'
 import { Project } from "../types";
 import { useAuth } from "@/hooks/useAuth";
+import { isManager } from "@/types/policies";
 
 export default function DashboardView() {
 
@@ -37,7 +38,7 @@ export default function DashboardView() {
       queryClient.invalidateQueries({queryKey: ["projects"]})
     }
   })
-
+  
   const confirmDelete = (projectId: Project['_id']) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -59,12 +60,12 @@ export default function DashboardView() {
     });
   };
 
-    const { data : userAuth } = useAuth()
+    const { data : userAuth, isLoading: isLoadingAuth } = useAuth()
   
 
-  if (isLoading) return <div>Cargando...</div>;
+  if (isLoading && isLoadingAuth) return <div>Cargando...</div>;
 
-  if (data)
+  if (data && userAuth) {
     return (
       <div className="flex flex-col justify-center items-center">
         <h1 className=" font-black text-3xl md:text-4xl">Mis Proyectos</h1>
@@ -92,12 +93,9 @@ export default function DashboardView() {
               >
                 {userAuth && (
                   <>
-                    {project.manager === userAuth._id && (
+                    {isManager(project.manager, userAuth._id) ? 
                       <p className="absolute bg-gray-700 p-2 rounded-br-2xl top-0 left-0 text-sm bg- font-semibold">👑</p>
-                    )}
-                    {project.team.includes(userAuth._id) && project.manager !== userAuth._id && (
-                      <p className="absolute bg-gray-300 p-2 rounded-br-2xl top-0 left-0 text-sm font-semibold">👥</p>
-                    )}
+                    : <p className="absolute bg-gray-300 p-2 rounded-br-2xl top-0 left-0 text-sm font-semibold">👥</p>}
                   </>
                 )}
                 <div className="flex min-w-0 gap-x-4">
@@ -143,23 +141,27 @@ export default function DashboardView() {
                             Ver Proyecto
                           </Link>
                         </MenuItem>
-                        <MenuItem>
-                          <Link
-                            to={`/projects/${project._id}/edit`}
-                            className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
-                          >
-                            Editar Proyecto
-                          </Link>
-                        </MenuItem>
-                        <MenuItem>
-                          <button
-                            type="button"
-                            className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
-                            onClick={() => confirmDelete(project._id)}
-                          >
-                            Eliminar Proyecto
-                          </button>
-                        </MenuItem>
+                        {isManager(project.manager, userAuth._id) && (
+                          <>
+                            <MenuItem>
+                            <Link
+                              to={`/projects/${project._id}/edit`}
+                              className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
+                            >
+                              Editar Proyecto
+                            </Link>
+                          </MenuItem>
+                          <MenuItem>
+                            <button
+                              type="button"
+                              className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
+                              onClick={() => confirmDelete(project._id)}
+                            >
+                              Eliminar Proyecto
+                            </button>
+                          </MenuItem>
+                            </>
+                        )}
                       </MenuItems>
                     </Transition>
                   </Menu>
@@ -182,4 +184,4 @@ export default function DashboardView() {
         )}
       </div>
     );
-}
+}}

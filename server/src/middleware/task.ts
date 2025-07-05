@@ -51,3 +51,11 @@ export function taskBelongsToProject(req : Request, res : Response, next : NextF
     }
     next()
 }
+
+export function hasAutorization(req : Request, res : Response, next : NextFunction) {
+    if(req.project.manager.toString() !== req.user.id.toString()) {
+        res.status(404).json({error: 'Accion no valida'})
+        return
+    }
+    next()
+}
