@@ -17,7 +17,8 @@ import { getTaskById, updateStatus } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 import { formatDate } from "@/utils/utils";
 import { TranslateStatus } from "@/locales/es";
-import { Task, TaskStatus } from "@/types/index";
+import { TaskStatus } from "@/types/index";
+import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid"
 
 export default function TaskModalDetails() {
   const params = useParams();
@@ -28,7 +29,7 @@ export default function TaskModalDetails() {
   const taskId = queryParams.get("viewTask")!;
   const show = taskId ? true : false;
 
-  const { data, isError, error } = useQuery<Task>({
+  const { data, isError, error } = useQuery({
     queryKey: ["task", taskId],
     queryFn: () => getTaskById({ projectId, taskId }),
     enabled: !!taskId,
@@ -100,7 +101,15 @@ export default function TaskModalDetails() {
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-95"
                 >
-                  <DialogPanel className="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-10 md:p-16">
+                  <DialogPanel className="relative w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all p-10 md:p-16">
+
+                    <ClipboardDocumentListIcon 
+                      className="absolute right-0 top-0 mt-3 mr-3 w-8 h-8 p-1.5 cursor-pointer rounded-full bg-purple-500 text-white hover:bg-purple-400 transition"
+                      onClick={() =>
+                        navigate(`${location.pathname}?viewNote=${taskId}`, { replace: true })
+                      }
+                    />
+
                     <p className="text-sm text-slate-400">
                       Agregada el: {formatDate(data.createdAt)}
                     </p>
@@ -121,7 +130,7 @@ export default function TaskModalDetails() {
                     {data.completedBy.length > 0 ? (
                       <select
                         className="p-2 mt-2 border border-gray-300 rounded-md bg-gray-100 text-slate-600 cursor-pointer"
-                        value={data.completedBy.at(-1)?._id}
+                        defaultValue={data.completedBy.at(-1)?._id}
                       >
                         {data.completedBy.map((log, index) => (
                           <option key={log._id} value={log._id}>

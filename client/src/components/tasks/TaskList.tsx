@@ -95,7 +95,7 @@ export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskList
                   <p className="text-gray-500 text-center">No hay tareas</p>
                 ) : (
                   <ul className="space-y-4">
-                    {tasks.map((task) => (
+                    {tasks.slice().reverse().map((task) => (
                       <TaskCard key={task._id} task={task} canEdit={canEdit}/>
                     ))}
                   </ul>
@@ -128,7 +128,7 @@ export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskList
                     No Hay tareas
                   </li>
                 ) : (
-                  tasks.map((task) => <TaskCard key={task._id} task={task} canEdit={canEdit} />)
+                  tasks.slice().reverse().map((task) => <TaskCard key={task._id} task={task} canEdit={canEdit} />)
                 )}
               </ul>
             </div>
