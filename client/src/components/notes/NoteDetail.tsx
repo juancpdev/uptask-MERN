@@ -108,11 +108,13 @@ export default function NoteDetail({ notes }: NotesPanelProp) {
                           <button
                             className="bg-gray-100 block w-full px-4 py-2 text-sm text-red-600 text-left rounded-md cursor-pointer"
                             onClick={() =>
-                              mutate({
+                              setTimeout(() => {
+                                mutate({
                                 projectId,
                                 taskId,
                                 noteId: note._id,
                               })
+                              }, 500)
                             }
                           >
                             Eliminar
