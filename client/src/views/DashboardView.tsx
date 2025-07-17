@@ -7,14 +7,12 @@ import {
   Transition,
 } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { deleteProject, getProjects } from "@/api/ProjectAPI";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import Swal from 'sweetalert2'
-import { Project } from "../types";
+import { getProjects } from "@/api/ProjectAPI";
+import { useQuery} from "@tanstack/react-query";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { isManager } from "@/types/policies";
+import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
 
 export default function DashboardView() {
 
@@ -25,42 +23,11 @@ export default function DashboardView() {
   });
   
   // Fuerza un nuevo refecht y obtiene datos nuevos
-  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  // Modifica datos
-  const {mutate} = useMutation({
-    mutationFn: deleteProject,
-    onError: (error) => {
-      toast.error(error.message)
-    },
-    onSuccess: (data) => { 
-      toast.success(data)
-      queryClient.invalidateQueries({queryKey: ["projects"]})
-    }
-  })
-  
-  const confirmDelete = (projectId: Project['_id']) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esto!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "¡Eliminado!",
-          text: "Tu proyecto ha sido eliminado.",
-          icon: "success"
-        });
-        mutate(projectId);
-      }
-    });
-  };
 
-    const { data : userAuth, isLoading: isLoadingAuth } = useAuth()
+  const { data : userAuth, isLoading: isLoadingAuth } = useAuth()
   
 
   if (isLoading && isLoadingAuth) return <div>Cargando...</div>;
@@ -155,7 +122,7 @@ export default function DashboardView() {
                             <button
                               type="button"
                               className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
-                              onClick={() => confirmDelete(project._id)}
+                              onClick={() => navigate(location.pathname + `?deleteProject=${project._id}`)}
                             >
                               Eliminar Proyecto
                             </button>
@@ -182,6 +149,9 @@ export default function DashboardView() {
             </p>
           </div>
         )}
+
+        <DeleteProjectModal />
+
       </div>
     );
 }}
