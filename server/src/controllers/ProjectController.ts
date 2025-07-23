@@ -47,12 +47,6 @@ export class ProjectController {
 
     static updateProject = async (req: Request, res: Response) => {
         try {
-
-            if(req.project.manager.toString() !== req.user.id.toString()){ 
-                res.status(404).json({error: 'No tienes permisos'})
-                return
-            }
-
             req.project.projectName = req.body.projectName
             req.project.clientName = req.body.clientName
             req.project.description = req.body.description
@@ -66,12 +60,6 @@ export class ProjectController {
 
     static deleteProject = async (req: Request, res: Response) => {
         try {
-
-            if(req.project.manager.toString() !== req.user.id.toString()){ 
-                res.status(404).json({error: 'No tienes permisos'})
-                return
-            }
-
             await req.project.deleteOne()
             res.send('Proyecto Eliminado')
         } catch (error) {

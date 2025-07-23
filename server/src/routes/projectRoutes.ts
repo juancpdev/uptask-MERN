@@ -42,11 +42,13 @@ router.put('/:projectId',
     body('description')
         .notEmpty().withMessage('La descripcion es obligatoria'),
     handleInputErrors,
+    hasAutorization,
     ProjectController.updateProject
 )
 
 router.delete('/:projectId',
     handleInputErrors,
+    hasAutorization,
     ProjectController.deleteProject
 )
 
