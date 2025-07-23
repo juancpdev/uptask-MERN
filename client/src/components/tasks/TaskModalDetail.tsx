@@ -129,11 +129,11 @@ export default function TaskModalDetails() {
 
                     {data.completedBy.length > 0 ? (
                       <select
-                        className="p-2 mt-2 border border-gray-300 rounded-md bg-gray-100 text-slate-600 cursor-pointer"
+                        className=" mt-2 border border-gray-300 rounded-md bg-gray-100 text-slate-600 cursor-pointer w-auto max-w-full truncate"
                         defaultValue={data.completedBy.at(-1)?._id}
                       >
                         {data.completedBy.map((log, index) => (
-                          <option key={log._id} value={log._id}>
+                          <option className="rounded-md" disabled key={log._id} value={log._id}>
                             {index + 1}. {TranslateStatus[log.status]} por:{" "}
                             {log.user.name}
                           </option>

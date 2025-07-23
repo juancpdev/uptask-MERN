@@ -1,20 +1,25 @@
-import { Task, User } from "@/types/index";
+import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { Project, TaskProject, TaskStatus, User } from "@/types/index";
 import TaskCard from "./TaskCard";
 import { PlusIcon, UserGroupIcon } from "@heroicons/react/20/solid";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { TranslateStatus } from "@/locales/es";
 import { isManager } from "@/types/policies";
+import DropTask from "./DropTask";
+import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateStatus } from "@/api/TaskAPI";
 
 type TaskListProps = {
-  tasks: Task[];
+  tasks: TaskProject[];
   userAuth: User
   manager: string
   canEdit: boolean
 };
 
 type GrupedTask = {
-  [key: string]: Task[];
+  [key: string]: TaskProject[];
 };
 
 const initialStatusGruops: GrupedTask = {
@@ -34,6 +39,24 @@ const ColorizeStatus: { [key: string]: string } = {
 };
 
 export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskListProps) {
+  const params = useParams();
+  const projectId = params.projectId!;
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: updateStatus,
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      // queryClient.invalidateQueries({ queryKey: ["task", taskId] });
+      toast.dismiss();
+      toast.success(data);
+      navigate(location.pathname, { replace: true });
+    },
+  });
+
   const navigate = useNavigate();
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -54,6 +77,42 @@ export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskList
     currentGroup = [...currentGroup, task];
     return { ...acc, [task.status]: currentGroup };
   }, initialStatusGruops);
+
+    const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+ 
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
+  
+  const sensors = useSensors(mouseSensor, touchSensor);
+ 
+  const handleDragEnd = (e: DragEndEvent) => { 
+    const { over, active} = e
+
+    if(over && over.id) {
+      const taskId = active.id.toString()
+      const status = over.id as TaskStatus
+      mutate({projectId, taskId, status})
+
+      queryClient.setQueryData(['project', projectId], (prevData: Project) => {
+        const updateTask = prevData.tasks.map((task) => {
+          if(task._id === taskId) {
+            return {...task, status}
+          }
+          return task
+        })
+        return {...prevData, tasks: updateTask}
+      })
+
+    }
+  }
 
   return (
     <div className="w-full px-4 md:px-6 lg:px-8 overflow-x-hidden">
@@ -106,33 +165,38 @@ export default function TaskList({ tasks, userAuth, manager, canEdit }: TaskList
         </div>
       ) : (
         <div className="flex gap-5 overflow-x-scroll 2xl:overflow-auto pb-32">
-          {Object.entries(groupedTasks).map(([status, tasks]) => (
-            <div key={status} className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5">
-              <div
-                className={`capitalize flex justify-between bg-white rounded-t-lg p-3 border font-semibold border-slate-50 shadow ${ColorizeStatus[status]} border-t-10`}
-              >
-                <p>{TranslateStatus[status]}</p>
-                {tasks.length === 1 ? (
-                  <span className="text-gray-500 text-sm">
-                    {tasks.length} tarea
-                  </span>
-                ) : (
-                  <span className="text-gray-500 text-sm">
-                    {tasks.length} tareas
-                  </span>
-                )}
+          <DndContext onDragEnd={handleDragEnd} sensors={sensors} >
+            {Object.entries(groupedTasks).map(([status, tasks]) => (
+              <div key={status} className="min-w-[300px] 2xl:min-w-0 2xl:w-1/5">
+                <div
+                  className={`capitalize flex justify-between bg-white rounded-t-lg p-3 border font-semibold border-slate-50 shadow ${ColorizeStatus[status]} border-t-10`}
+                >
+                  <p>{TranslateStatus[status]}</p>
+                  {tasks.length === 1 ? (
+                    <span className="text-gray-500 text-sm">
+                      {tasks.length} tarea
+                    </span>
+                  ) : (
+                    <span className="text-gray-500 text-sm">
+                      {tasks.length} tareas
+                    </span>
+                  )}
+                </div>
+
+                <DropTask status={status}/>
+
+                <ul className="mt-5 space-y-5">
+                  {tasks.length === 0 ? (
+                    <li className="text-gray-500 text-center pt-3">
+                      No Hay tareas
+                    </li>
+                  ) : (
+                    tasks.slice().reverse().map((task) => <TaskCard key={task._id} task={task} canEdit={canEdit} />)
+                  )}
+                </ul>
               </div>
-              <ul className="mt-5 space-y-5">
-                {tasks.length === 0 ? (
-                  <li className="text-gray-500 text-center pt-3">
-                    No Hay tareas
-                  </li>
-                ) : (
-                  tasks.slice().reverse().map((task) => <TaskCard key={task._id} task={task} canEdit={canEdit} />)
-                )}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </DndContext>
         </div>
       )}
     </div>
