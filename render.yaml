@@ -9,4 +9,4 @@ services:
       - key: NODE_VERSION
         value: 18
       - key: MONGODB_URI
-        value: your-mongo-uri-here
+        value: mongodb+srv://root:<v8W_ZnTAPaakGQ2>@cluster0.ndi1c.mongodb.net/
