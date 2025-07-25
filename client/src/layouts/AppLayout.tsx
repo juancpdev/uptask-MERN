@@ -13,7 +13,7 @@ export default function AppLayout() {
 
   if(data) return (
     <div className="grid min-h-screen grid-rows-[auto_1fr_auto]">
-      <header className="bg-gray-800 p-5">
+      <header className=" bg-cyan-900 p-5">
         <div className=" max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center">     
           <div className="w-64">
             <Link to={'/'}>
@@ -32,8 +32,10 @@ export default function AppLayout() {
         <Outlet/>
       </div>
 
-      <footer className="bg-gray-800 py-10 text-sm md:text-base text-white">
-        <p className="text-center">Todos los derechos reservador por UpTask - {new Date().getFullYear()}</p>
+      <footer className="bg-cyan-900 py-10 text-sm md:text-base text-white text-center">
+        Created by
+          <a className="font-bold text-white hover:text-orange-300 transition-all" target="_blank" href="https://jpdeveloper.netlify.app/"> @Jpdev</a>
+
       </footer>
 
       <ToastContainer
