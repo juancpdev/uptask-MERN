@@ -8,6 +8,7 @@ import { hasAutorization, taskBelongsToProject, TaskExist } from "../middleware/
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
 import { NoteController } from "../controllers/NoteController";
+import { isProjectManager } from "../middleware/isProjectManager";
 
 const router = Router()
 
@@ -108,6 +109,8 @@ router.post('/:projectId/team/find',
 )
 
 router.get('/:projectId/team',
+    handleInputErrors,
+    isProjectManager,
     TeamMemberController.getProjectTeam
 )
 
