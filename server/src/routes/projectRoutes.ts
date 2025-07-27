@@ -128,6 +128,12 @@ router.delete('/:projectId/team/:userId',
         TeamMemberController.removeMemberById
 )
 
+router.delete('/:projectId/leaveProject',
+    authenticate,
+    handleInputErrors,
+    TeamMemberController.leaveProject
+)
+
 /** Routes for notes */
 router.get('/:projectId/tasks/:taskId/notes',
     handleInputErrors,

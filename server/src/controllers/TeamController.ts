@@ -82,4 +82,27 @@ export class TeamMemberController {
       res.status(500).json({ error: "Hubo un error" });
     }
   };
+
+  static leaveProject = async (req: Request, res: Response) => {
+    try {
+      const userId = req.user.id.toString()
+
+    // Verificar que el usuario esté en el equipo
+    if (!req.project.team.some((member) => member.toString() === userId)) {
+        res.status(409).json({ error: 'No perteneces a este proyecto' });
+        return 
+    }
+
+      req.project.team = req.project.team.filter(
+        (team) => team.toString() !== userId
+      );
+
+      await req.project.save();
+
+      res.send("Saliste del proyecto correctamente");
+
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
 }

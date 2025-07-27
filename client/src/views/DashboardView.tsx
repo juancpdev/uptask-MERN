@@ -8,27 +8,41 @@ import {
 } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { getProjects } from "@/api/ProjectAPI";
-import { useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { isManager } from "@/types/policies";
 import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
+import { toast } from "react-toastify";
+import { leaveProject } from "@/api/TeamAPI";
+import Swal from "sweetalert2";
 
 export default function DashboardView() {
-
   // Obtiene datos
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
   });
-  
+
   // Fuerza un nuevo refecht y obtiene datos nuevos
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const { data: userAuth, isLoading: isLoadingAuth } = useAuth();
+  const queryClient = useQueryClient();
 
-  const { data : userAuth, isLoading: isLoadingAuth } = useAuth()
-  
+  const { mutate } = useMutation({
+    mutationFn: leaveProject,
+    onError: (error) => {
+      toast.dismiss();
+      toast(error.message);
+    },
+    onSuccess: (data) => {
+      toast.dismiss();
+      toast.success(data);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
 
   if (isLoading && isLoadingAuth) return <div>Cargando...</div>;
 
@@ -60,9 +74,15 @@ export default function DashboardView() {
               >
                 {userAuth && (
                   <>
-                    {isManager(project.manager, userAuth._id) ? 
-                      <p className="absolute bg-gray-700 p-2 rounded-br-2xl top-0 left-0 text-sm bg- font-semibold">👑</p>
-                    : <p className="absolute bg-gray-300 p-2 rounded-br-2xl top-0 left-0 text-sm font-semibold">👥</p>}
+                    {isManager(project.manager, userAuth._id) ? (
+                      <p className="absolute bg-gray-700 p-2 rounded-br-2xl top-0 left-0 text-sm bg- font-semibold">
+                        👑
+                      </p>
+                    ) : (
+                      <p className="absolute bg-gray-300 p-2 rounded-br-2xl top-0 left-0 text-sm font-semibold">
+                        👥
+                      </p>
+                    )}
                   </>
                 )}
                 <div className="flex min-w-0 gap-x-4">
@@ -111,23 +131,54 @@ export default function DashboardView() {
                         {isManager(project.manager, userAuth._id) && (
                           <>
                             <MenuItem>
-                            <Link
-                              to={`/projects/${project._id}/edit`}
-                              className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
-                            >
-                              Editar Proyecto
-                            </Link>
-                          </MenuItem>
+                              <Link
+                                to={`/projects/${project._id}/edit`}
+                                className="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50"
+                              >
+                                Editar Proyecto
+                              </Link>
+                            </MenuItem>
+                            <MenuItem>
+                              <button
+                                type="button"
+                                className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
+                                onClick={() =>
+                                  navigate(
+                                    location.pathname +
+                                      `?deleteProject=${project._id}`
+                                  )
+                                }
+                              >
+                                Eliminar Proyecto
+                              </button>
+                            </MenuItem>
+                          </>
+                        )}
+                        {!isManager(project.manager, userAuth._id) && (
                           <MenuItem>
                             <button
                               type="button"
                               className="block px-3 py-1 text-sm leading-6 text-red-500 w-full hover:bg-gray-50 text-start cursor-pointer"
-                              onClick={() => navigate(location.pathname + `?deleteProject=${project._id}`)}
+                              onClick={async () => {
+                                const result = await Swal.fire({
+                                  title: "¿Estás seguro?",
+                                  text: "Vas a abandonar el proyecto y ya no tendrás acceso",
+                                  icon: "warning",
+                                  showCancelButton: true,
+                                  confirmButtonText: "Sí, salir",
+                                  cancelButtonText: "Cancelar",
+                                  confirmButtonColor: "#d33",
+                                  cancelButtonColor: "#3085d6",
+                                });
+
+                                if (result.isConfirmed) {
+                                  mutate(project._id);
+                                }
+                              }}
                             >
-                              Eliminar Proyecto
+                              Abandonar Proyecto
                             </button>
                           </MenuItem>
-                            </>
                         )}
                       </MenuItems>
                     </Transition>
@@ -151,7 +202,7 @@ export default function DashboardView() {
         )}
 
         <DeleteProjectModal />
-
       </div>
     );
-}}
+  }
+}
