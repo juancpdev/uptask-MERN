@@ -2,7 +2,7 @@
 🔗 **URL:** [UpTask](https://uptask-with-mern.vercel.app/)
 
 ## 🛠️ Tecnologías
-- **Frontend:** React, Tailwind CSS
+- **Frontend:** React, TailwindCSS, TypeScript
 - **Backend:** Node.js, Express
 - **Base de datos:** MongoDB + Mongoose
 - **Autenticación:** JWT
