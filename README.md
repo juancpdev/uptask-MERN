@@ -2,14 +2,14 @@
 🔗 **URL:** [UpTask](https://uptask-with-mern.vercel.app/)
 
 ## 🛠️ Tecnologías
-- **Frontend:** HTML, SCSS, SASS, JavaScript
-- **Backend:** PHP
-- **Base de datos:** MySQL
+- **Frontend:** React, Tailwind CSS
+- **Backend:** Node.js, Express
+- **Base de datos:** MongoDB + Mongoose
+- **Autenticación:** JWT
 
 ## 📸 Capturas
-![6_1](https://github.com/user-attachments/assets/79761f23-ec99-42ba-b08a-d5fabb5e4f2a)
-![6_2](https://github.com/user-attachments/assets/40b8cc1e-f927-47db-8083-2c611f160377)
-![6_3](https://github.com/user-attachments/assets/c4a31ee4-ee41-44c5-b4c5-9ae0c4957bc6)
-![6_4](https://github.com/user-attachments/assets/7a600c23-fda1-4695-8697-8497ad0a5cf3)
-![6_5](https://github.com/user-attachments/assets/fbecc939-ab25-48f9-a6d0-e66e4f80022b)
-![6_6](https://github.com/user-attachments/assets/4ad22181-31c0-4057-a108-b40650b1826e)
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/5e186641-a0a0-4192-8778-fde564942b95" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6db7ca2a-95e1-47d6-8bb4-61e9de1d824c" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/38cd299d-a2e0-4e3d-ab45-2070d7431863" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/08d19a68-e047-4af9-b5f8-8e09823d64b7" />
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/b5604bf3-1e63-4903-b0bf-68d30d540290" />
